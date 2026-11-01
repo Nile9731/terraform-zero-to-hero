@@ -39,7 +39,17 @@ Providers are an essential part of Terraform. They allow Terraform to interact w
 
 There are three main ways to configure providers in Terraform:
 
-### In the root module 
+### In the root module(Root module
+
+The root module is the directory where you run terraform init/plan/apply. All the .tf files directly in that folder together form the root module. Files in subfolders are not included.
+
+It is where you:
+
+configure providers
+configure the backend, i.e. where the state file lives
+call child modules and supply their inputs (often from .tfvars or TF_VAR_*)
+
+Each root module has its own state file.) 
 
 This is the most common way to configure providers. The provider configuration block is placed in the root module of the Terraform configuration. This makes the provider configuration available to all the resources in the configuration.
 
@@ -54,7 +64,24 @@ resource "aws_instance" "example" {
 }
 ```
 
-### In a child module
+### In a child module(A child module is any module that a root module (or another module) calls with a module block. It’s a reusable package of resources, much like a function:
+
+Inputs are variable blocks (the function’s parameters).
+Outputs are output blocks (its return values).
+It has no provider config and no backend. It uses whatever provider the caller passes in (yesterday’s providers = {...}).
+Its resources are stored in the caller’s state, under addresses like module.cp_nodes.vsphere_virtual_machine.this["cp1"].)
+iac-lab/terraform/
+├── modules/
+│   └── vm/                  ← CHILD module (never run terraform here)
+│       ├── main.tf            vsphere_virtual_machine resource
+│       ├── variables.tf       name, cpu, memory, ip, template, network...
+│       └── outputs.tf         ip, vm_id
+└── envs/
+    └── lab/                 ← ROOT module (cd here, run terraform)
+        ├── versions.tf        required_providers, backend
+        ├── providers.tf       provider "vsphere" {}
+        ├── main.tf            module "cp_nodes" { source = "../../modules/vm" ... }
+        └── lab.tfvars         actual values (not committed if it holds secrets)
 
 You can also configure providers in a child module. This is useful if you want to reuse the same provider configuration in multiple resources.
 
