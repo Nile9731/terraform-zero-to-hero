@@ -21,6 +21,8 @@ provider "aws" {
 }
 
 # Create an EC2 instance using the input variables
+#syntax resource "<Resource_type>" "<Local_Name>" {argument for configuration setting 
+# argument_name= expression }
 resource "aws_instance" "example_instance" {
   ami           = var.ami_id
   instance_type = var.instance_type
