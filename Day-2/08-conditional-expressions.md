@@ -1,7 +1,8 @@
 # Conditional Expressions
 
 Conditional expressions in Terraform are used to define conditional logic within your configurations. They allow you to make decisions or set values based on conditions. Conditional expressions are typically used to control whether resources are created or configured based on the evaluation of a condition.
-
+default  <  TF_VAR_*  <  terraform.tfvars  <  *.auto.tfvars  <  -var / -var-file
+(weakest)                                                        (strongest)
 The syntax for a conditional expression in Terraform is:
 
 ```hcl
@@ -34,6 +35,7 @@ variable "environment" {
   description = "Environment type"
   type        = string
   default     = "development"
+#default is the fallback value.
 }
 
 variable "production_subnet_cidr" {
